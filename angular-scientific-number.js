@@ -172,7 +172,9 @@
     return directive;
   });
   
+  //---------------------------------------------------------------------------
   // ns-scientific-input
+  //---------------------------------------------------------------------------
   app.directive('nsScientificInput', [/*'$filter', '$locale',*/ function(/*$filter, $locale*/) {
 	// inspired by https://github.com/aguirrel/ng-currency	  
     return {

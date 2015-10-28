@@ -133,39 +133,13 @@
   });
   
   app.directive("scientificNumberInput", function() {
-    var directive = {
-      /*
-      require: 'ngModel',
-      link: function(scope, element, attrs, ngModelController) {
-        ngModelController.$parsers.push(function(data) {
-          //convert data from view format to model format
-          //console.log('parser');
-          return Number(data).toExponential(); //converted
-        });
-
-        ngModelController.$formatters.push(function(data) {
-          //console.log('formatter ' + data + ' - ' + Number(data).toExponential());
-          //convert data from model format to view format
-          return Number(data).toExponential(); //converted
-        });
-      },
-      */
-      
-      restrict: 'E',
+    var directive = {           
+      restrict: 'EA',
       scope: {
         data: '=ngModel',
       },
       controller: function($scope) {
         var vm = this;
-        //vm.displayData = vm.data;
-        vm.onBlur = onBlur;
-        
-        function onBlur(data) {
-          console.log('blurry');
-          vm.data = Number(data).toExponential();
-          console.log(vm.data);
-          //$scope.$apply();
-        }
         
         function init() {
           $scope.$watch(
@@ -181,7 +155,7 @@
               }
               // angular copy will preserve the reference of $scope.someVar
               // so it will not trigger another digest 
-             // angular.copy(value, vm.data);
+			  // angular.copy(value, vm.data);
             }
           );
         }
@@ -190,7 +164,6 @@
       },
       controllerAs: 'vm',
       bindToController: true, //required in 1.3+ with controllerAs
-      //templateUrl: 'scientificNumber.html',
       
       //template: '<input type="text" ng-model="vm.data" ng-blur="vm.onBlur(vm.data)">',
       template: '<input type="text" ng-model="vm.data" ng-model-options="{ updateOn: \'blur\' }">',
@@ -198,5 +171,55 @@
     
     return directive;
   });
+  
+  // ns-scientific-input
+  app.directive('nsScientificInput', [/*'$filter', '$locale',*/ function(/*$filter, $locale*/) {
+	// inspired by https://github.com/aguirrel/ng-currency	  
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      scope: false,
+      link: function(scope, element, attrs, ngModel) {
+        if (attrs.ngScientificInput === 'false') return;      
+        
+        function convertToExponential(number) {
+          return Number(number).toExponential();
+        }
+      
+        element.on("blur", function() {
+          ngModel.$commitViewValue();
+          reformatViewValue();
+        });
+        
+        function reformatViewValue() {          
+          var viewValue = ngModel.$$rawModelValue;
+          
+          if(ngModel.$$rawModelValue && ngModel.$$rawModelValue !== '') {
+            viewValue = convertToExponential(viewValue);
+          } 
+          ngModel.$setViewValue(viewValue);
+          ngModel.$render();
+        }
+        
+        ngModel.$parsers.push(function(viewValue) {
+          if(viewValue) {
+            return Number(viewValue);
+          } else {
+            return viewValue;
+          }
+          
+        });
+        
+        ngModel.$formatters.unshift(function(value) {        
+          if(value) {
+            return convertToExponential(value);
+          } else {
+            return value;
+          }
+        });
+                
+      }
+    }
+  }]);
 
 })();

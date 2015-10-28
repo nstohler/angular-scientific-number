@@ -131,5 +131,72 @@
       }
     };
   });
+  
+  app.directive("scientificNumberInput", function() {
+    var directive = {
+      /*
+      require: 'ngModel',
+      link: function(scope, element, attrs, ngModelController) {
+        ngModelController.$parsers.push(function(data) {
+          //convert data from view format to model format
+          //console.log('parser');
+          return Number(data).toExponential(); //converted
+        });
+
+        ngModelController.$formatters.push(function(data) {
+          //console.log('formatter ' + data + ' - ' + Number(data).toExponential());
+          //convert data from model format to view format
+          return Number(data).toExponential(); //converted
+        });
+      },
+      */
+      
+      restrict: 'E',
+      scope: {
+        data: '=ngModel',
+      },
+      controller: function($scope) {
+        var vm = this;
+        //vm.displayData = vm.data;
+        vm.onBlur = onBlur;
+        
+        function onBlur(data) {
+          console.log('blurry');
+          vm.data = Number(data).toExponential();
+          console.log(vm.data);
+          //$scope.$apply();
+        }
+        
+        function init() {
+          $scope.$watch(
+            function watchFoo(scope) {
+              // Return the "result" of the watch expression.
+              return( vm.data );
+            }, 
+            function(newValue, oldValue) {
+              var value = Number(newValue).toExponential();
+              //console.log('changed! ' + newValue + ' -> ' +value);
+              if(vm.data !== value) {
+                vm.data = value;
+              }
+              // angular copy will preserve the reference of $scope.someVar
+              // so it will not trigger another digest 
+             // angular.copy(value, vm.data);
+            }
+          );
+        }
+        
+        init();
+      },
+      controllerAs: 'vm',
+      bindToController: true, //required in 1.3+ with controllerAs
+      //templateUrl: 'scientificNumber.html',
+      
+      //template: '<input type="text" ng-model="vm.data" ng-blur="vm.onBlur(vm.data)">',
+      template: '<input type="text" ng-model="vm.data" ng-model-options="{ updateOn: \'blur\' }">',
+    };
+    
+    return directive;
+  });
 
 })();

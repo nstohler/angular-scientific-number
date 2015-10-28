@@ -194,7 +194,7 @@
         });
 		
 		function isNumber(n) {
-          return !isNaN(parseFloat(n)) && isFinite(n);
+			return !isNaN(parseFloat(n)) && isFinite(n);
         }
         
         function reformatViewValue() {          
@@ -210,9 +210,9 @@
           if(viewValue) {
 			var retval = Number(viewValue);
             if(isNumber(retval)) {
-              return retval;
+            	return retval;
             } else {
-			  return viewValue;
+            	return viewValue;
 			}
           } else {
             return viewValue;

@@ -192,11 +192,14 @@
           ngModel.$commitViewValue();
           reformatViewValue();
         });
+		
+		function isNumber(n) {
+          return !isNaN(parseFloat(n)) && isFinite(n);
+        }
         
         function reformatViewValue() {          
-          var viewValue = ngModel.$$rawModelValue;
-          
-          if(ngModel.$$rawModelValue && ngModel.$$rawModelValue !== '') {
+          var viewValue = ngModel.$$rawModelValue;        
+          if(viewValue && viewValue !== '' && isNumber(viewValue)) {
             viewValue = convertToExponential(viewValue);
           } 
           ngModel.$setViewValue(viewValue);
@@ -205,11 +208,15 @@
         
         ngModel.$parsers.push(function(viewValue) {
           if(viewValue) {
-            return Number(viewValue);
+			var retval = Number(viewValue);
+            if(isNumber(retval)) {
+              return retval;
+            } else {
+			  return viewValue;
+			}
           } else {
             return viewValue;
-          }
-          
+          }          
         });
         
         ngModel.$formatters.unshift(function(value) {        

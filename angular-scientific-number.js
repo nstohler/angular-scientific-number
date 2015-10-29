@@ -192,11 +192,7 @@
                     digits: globalOptions.digits,
                     extendDigitsAllowed: globalOptions.extendDigitsAllowed,
                     restoreOriginalValueOnFocus: globalOptions.restoreOriginalValueOnFocus,
-                };
-
-                if (config.restoreOriginalValueOnFocus) {
-                    config.extendDigitsAllowed = true;  // prevent data loss!
-                }
+                };               
 
                 var expDigits = config.digits;
 
@@ -256,7 +252,7 @@
                             var newViewValueRaw = convertToExponentialRaw(viewValue);
                             var precisionRaw = getNumberPrecision(newViewValueRaw);
 
-                            if (expDigits) {
+                            if (expDigits && !config.restoreOriginalValueOnFocus) {
                                 if (precisionRaw > expDigits) {
                                     expDigits = precisionRaw;
                                 } else {
@@ -274,8 +270,12 @@
                             viewValue = newValue;
                         }
                     }
-                    ngModel.$setViewValue(viewValue);
-                    ngModel.$render();
+					if(config.restoreOriginalValueOnFocus) {					
+						element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
+					} else {					
+						ngModel.$setViewValue(viewValue);
+						ngModel.$render();
+					}                    
                 }
 
                 ngModel.$parsers.push(function (viewValue) {
@@ -353,7 +353,5 @@
     //    });
     // }]);
 
-    // webstorm change test xxy ws branching? test x SmartGitTest
-    // master edit?
-	// source tree edit
+	// tortoise git test
 })();

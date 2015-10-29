@@ -352,6 +352,5 @@
     //        restoreOriginalValueOnFocus: false,
     //    });
     // }]);
-
-    // smartgit test 2
+    
 })();

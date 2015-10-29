@@ -192,7 +192,7 @@
                     digits: globalOptions.digits,
                     extendDigitsAllowed: globalOptions.extendDigitsAllowed,
                     restoreOriginalValueOnFocus: globalOptions.restoreOriginalValueOnFocus,
-                };               
+                };
 
                 var expDigits = config.digits;
 
@@ -270,12 +270,12 @@
                             viewValue = newValue;
                         }
                     }
-					if(config.restoreOriginalValueOnFocus) {					
-						element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
-					} else {					
-						ngModel.$setViewValue(viewValue);
-						ngModel.$render();
-					}                    
+                    if (config.restoreOriginalValueOnFocus) {
+                        element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
+                    } else {
+                        ngModel.$setViewValue(viewValue);
+                        ngModel.$render();
+                    }
                 }
 
                 ngModel.$parsers.push(function (viewValue) {
@@ -353,5 +353,5 @@
     //    });
     // }]);
 
-	// tortoise git test
+    // smartgit test 2
 })();

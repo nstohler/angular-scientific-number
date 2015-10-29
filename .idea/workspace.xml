@@ -27,8 +27,8 @@
       <file leaf-file-name="angular-scientific-number.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/angular-scientific-number.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.79153603">
-              <caret line="355" column="52" selection-start-line="355" selection-start-column="52" selection-end-line="355" selection-end-column="52" />
+            <state vertical-scroll-proportion="0.4984326">
+              <caret line="344" column="7" selection-start-line="344" selection-start-column="7" selection-end-line="344" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -211,7 +211,13 @@
       <option name="project" value="LOCAL" />
       <updated>1446116973525</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="(webstorm commit test)">
+      <created>1446117902673</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1446117902673</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -223,7 +229,7 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900432" sideWeight="0.49789253" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2792208" sideWeight="0.5073762" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2792208" sideWeight="0.4926238" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2792208" sideWeight="0.4926238" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32900432" sideWeight="0.49789253" order="7" side_tool="false" content_ui="tabs" />
@@ -286,8 +292,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/angular-scientific-number.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.79153603">
-          <caret line="355" column="52" selection-start-line="355" selection-start-column="52" selection-end-line="355" selection-end-column="52" />
+        <state vertical-scroll-proportion="0.4984326">
+          <caret line="344" column="7" selection-start-line="344" selection-start-column="7" selection-end-line="344" selection-end-column="7" />
           <folding />
         </state>
       </provider>

@@ -1,9 +1,9 @@
 (function() {
   'use strict';
   
-  var app = angular.module('ngScientificNumber', []);
+  var mod = angular.module('ns-scientific-number', []);
 
-  app.filter('scientificFilter', function() {
+  mod.filter('scientificFilter', function() {
 
     return function(input, digits, displayZero, displayZeroAs) {
       //console.log(digits);
@@ -34,7 +34,7 @@
     }
   });
 
-  app.directive('scientificNumber', function() {
+  mod.directive('scientificNumber', function() {
 
     return {
       restrict: 'A',
@@ -90,7 +90,7 @@
     init();
   }
   
-  app.directive("scientificNumberNoZero", function() {
+  mod.directive("scientificNumberNoZero", function() {
     var directive = {
       restrict: 'A',
       scope: {
@@ -113,7 +113,7 @@
     return directive;
   });
 
-  app.directive("scientificInput", function() {
+  mod.directive("scientificInput", function() {
     // <input type="text" ng-model="vm.scientificNumber" scientific-input>
 
     return {
@@ -132,7 +132,7 @@
     };
   });
   
-  app.directive("scientificNumberInput", function() {
+  mod.directive("scientificNumberInput", function() {
     var directive = {           
       restrict: 'EA',
       scope: {
@@ -174,61 +174,173 @@
   
   //---------------------------------------------------------------------------
   // ns-scientific-input
-  //---------------------------------------------------------------------------
-  app.directive('nsScientificInput', [/*'$filter', '$locale',*/ function(/*$filter, $locale*/) {
-	// inspired by https://github.com/aguirrel/ng-currency	  
+  //---------------------------------------------------------------------------    
+  mod.directive('nsScientificInput', ['$filter', '$locale', 'nsScientificInputConfig', function($filter, $locale, nsScientificInputConfig) {
     return {
       restrict: 'A',
       require: 'ngModel',
-      scope: false,
+      scope: {
+        digits: '@',
+      },
       link: function(scope, element, attrs, ngModel) {
-        if (attrs.ngScientificInput === 'false') return;      
-        
+        if (attrs.ngScientificInput === 'false') return;
+
+        var globalOptions = nsScientificInputConfig.options;
+
+        // apply cfg
+        var config = {
+          digits: globalOptions.digits,
+          extendDigitsAllowed: globalOptions.extendDigitsAllowed,
+        };
+
+        var expDigits = config.digits;
+
         function convertToExponential(number) {
+          if (expDigits) {
+            return Number(number).toExponential(expDigits);
+          } else {
+            return Number(number).toExponential();
+          }
+        }
+
+        function convertToExponentialRaw(number) {
+          // return with as many digits as needed to be exact
           return Number(number).toExponential();
         }
-      
+
+        // use like this to restore original entered value
+        //element.on("focus", function() {
+        //  element.val(ngModel.$$rawModelValue);
+        //});
+
         element.on("blur", function() {
           ngModel.$commitViewValue();
           reformatViewValue();
         });
-		
-		function isNumber(n) {
-			return !isNaN(parseFloat(n)) && isFinite(n);
+
+        function isNumber(n) {
+          return !isNaN(parseFloat(n)) && isFinite(n);
         }
-        
-        function reformatViewValue() {          
-          var viewValue = ngModel.$$rawModelValue;        
-          if(viewValue && viewValue !== '' && isNumber(viewValue)) {
-            viewValue = convertToExponential(viewValue);
-          } 
+
+        function getNumberPrecision(a) {          
+          a = (a.toLowerCase() + "").split("e")[0]; // remove e+10 part from end
+          var precision = (Number(a) + "").split(".")[1].length;
+          return precision;
+
+          /*
+          // supposedly faster, but need some work to accept e-numbers (crashes!)
+          if(!isNumber(a)) {
+            return 0;
+          }
+          var e = 1;
+          while (Math.round(a * e) / e !== a) e *= 10;
+          return Math.log(e) / Math.LN10;
+          */
+        }
+
+        function reformatViewValue() {
+          var viewValue = ngModel.$$rawModelValue;
+
+          if (viewValue && viewValue !== '' && isNumber(viewValue)) {
+            if (expDigits && config.extendDigitsAllowed) {
+
+              // check if expDigits has to be changed
+              var newViewValue = convertToExponential(viewValue);
+              var newViewValueRaw = convertToExponentialRaw(viewValue);
+              var precisionRaw = getNumberPrecision(newViewValueRaw);
+
+              if (expDigits) {
+                if (precisionRaw > expDigits) {
+                  expDigits = precisionRaw;
+                } else {
+                  setExpDigits(); // reload from config/attribute
+                }
+                newViewValue = convertToExponential(viewValue);
+              }
+
+              viewValue = newViewValue;
+              //element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
+
+            } else {
+              // just format it 
+              var newValue = convertToExponential(viewValue);
+              viewValue = newValue;
+            }
+          }
           ngModel.$setViewValue(viewValue);
           ngModel.$render();
         }
-        
+
         ngModel.$parsers.push(function(viewValue) {
-          if(viewValue) {
-			var retval = Number(viewValue);
-            if(isNumber(retval)) {
-            	return retval;
+          if (viewValue) {
+            var retval = Number(viewValue);            
+            if (isNumber(retval)) {
+              return retval;
             } else {
-            	return viewValue;
-			}
+              return viewValue;
+            }
           } else {
             return viewValue;
-          }          
+          }
+
         });
-        
-        ngModel.$formatters.unshift(function(value) {        
-          if(value) {
+
+        ngModel.$formatters.unshift(function(value) {          
+          if (value) {
             return convertToExponential(value);
           } else {
             return value;
           }
         });
-                
+
+        function setExpDigits() {
+          if (config.digits) {
+            expDigits = config.digits;
+          }
+
+          if (scope.digits) {
+            expDigits = Number(scope.digits);
+            if (!isNumber(expDigits)) {
+              expDigits = undefined;
+            }
+          }
+        }
+
+        function init() {
+          setExpDigits();
+        }
+
+        init();
       }
     }
   }]);
+  
+  mod.provider("nsScientificInputConfig", function () {  	
+  	this.options = {
+		digits : undefined,
+  		extendDigitsAllowed : true,
+  		someOtherThing : 'testing',
+  	};
+
+  	this.setOptions = function (options) {
+  		if (!angular.isObject(options)) { throw new Error("Options should be an object!"); }
+  		this.options = angular.extend({}, this.options, options);
+  	};
+
+  	this.$get = function () {
+  	  return {
+  	    options : this.options
+  	  };
+  	};
+  });
+  
+  /* usage in app.js:
+  app.config(['nsScientificInputConfigProvider', function(nsScientificInputConfigProvider) {
+    nsScientificInputConfigProvider.setOptions({
+      digits: 3,
+      extendDigitsAllowed: true,
+    });
+  }]);
+  */
 
 })();

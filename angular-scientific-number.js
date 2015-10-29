@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   
-  var mod = angular.module('ns-scientific-input', []);
+  var mod = angular.module('ns-scientific-number', []);
 
   mod.filter('scientificFilter', function() {
 
@@ -328,9 +328,9 @@
   	};
 
   	this.$get = function () {
-  		return {
-  			options : this.options
-  		};
+  	  return {
+  	    options : this.options
+  	  };
   	};
   });
   

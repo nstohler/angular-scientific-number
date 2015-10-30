@@ -253,21 +253,19 @@
                             var precisionRaw = getNumberPrecision(newViewValueRaw);
 
                             if (expDigits && !config.restoreOriginalValueOnFocus) {
-                                if (precisionRaw > expDigits) {
+                                if (precisionRaw >= config.digits) {
                                     expDigits = precisionRaw;
                                 } else {
-                                    setExpDigits(); // reload from config/attribute
+                                    expDigits = config.digits;
                                 }
                                 newViewValue = convertToExponential(viewValue);
                             }
-
                             viewValue = newViewValue;
                             //element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
 
                         } else {
                             // just format it
-                            var newValue = convertToExponential(viewValue);
-                            viewValue = newValue;
+                            viewValue = convertToExponential(viewValue);
                         }
                     }
                     if (config.restoreOriginalValueOnFocus) {
@@ -304,17 +302,17 @@
                     if (config.digits) {
                         expDigits = config.digits;
                     }
-
                     if (scope.digits) {
                         expDigits = Number(scope.digits);
                         if (!isNumber(expDigits)) {
-                            expDigits = undefined;
+                            expDigits = config.digits;
                         }
                     }
                 }
 
                 function init() {
                     setExpDigits();
+                    config.digits = expDigits;  // local config now
                 }
 
                 init();

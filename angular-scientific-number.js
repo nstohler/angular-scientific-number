@@ -185,6 +185,15 @@
             link: function (scope, element, attrs, ngModel) {
                 if (attrs.ngScientificInput === 'false') return;
 
+                element.on('keydown', disableArrows);
+
+                element.bind('mousewheel', function() {
+                    element[0].blur();
+                });
+
+                element.removeClass('nospin');
+                element.addClass('nospin');
+
                 var globalOptions = nsScientificInputConfig.options;
 
                 // apply cfg
@@ -313,6 +322,12 @@
                 function init() {
                     setExpDigits();
                     config.digits = expDigits;  // local config now
+                }
+
+                function disableArrows(event) {
+                    if (event.keyCode === 38 || event.keyCode === 40) {
+                        event.preventDefault();
+                    }
                 }
 
                 init();

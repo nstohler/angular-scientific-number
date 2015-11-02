@@ -201,6 +201,7 @@
                     digits: globalOptions.digits,
                     extendDigitsAllowed: globalOptions.extendDigitsAllowed,
                     restoreOriginalValueOnFocus: globalOptions.restoreOriginalValueOnFocus,
+                    clearInvalidInput: globalOptions.clearInvalidInput,
                 };
 
                 var expDigits = config.digits;
@@ -255,6 +256,10 @@
 
                 function reformatViewValue() {
                     var viewValue = ngModel.$$rawModelValue;
+
+                    if(!viewValue && config.clearInvalidInput) {
+                        return;  // dont clear away invalid input!
+                    }
 
                     if (viewValue && viewValue !== '' && isNumber(viewValue)) {
                         if (expDigits && config.extendDigitsAllowed) {
@@ -343,6 +348,7 @@
             digits: undefined,
             extendDigitsAllowed: true,
             restoreOriginalValueOnFocus: false,
+            clearInvalidInput: false,
             someOtherThing: 'testing',
         };
 

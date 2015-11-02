@@ -227,9 +227,12 @@
 
                 function getNumberPrecision(a) {
                     a = (a.toLowerCase() + "").split("e")[0]; // remove e+10 part from end
-                    var precision = (Number(a) + "").split(".")[1].length;
+                    var precArr = (Number(a) + "").split(".");
+                    var precision = 0;
+                    if(precArr.length > 1) {
+                        precision = precArr[1].length;
+                    }
                     return precision;
-
                     /*
                      // supposedly faster, but need some work to accept e-numbers (crashes!)
                      if(!isNumber(a)) {

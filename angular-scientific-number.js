@@ -3,6 +3,8 @@
 
     var mod = angular.module('ns-scientific-number', []);
 
+    var templateString = '<span title="{{vm.nsScientificNumber | nsScientificFilter:vm.titleDigits:true}}">{{ vm.nsScientificNumber | nsScientificFilter:vm.digits:vm.displayZero:vm.displayZeroAs }}</span>';
+
     mod.filter('scientificFilter', function () {
 
         return function (input, digits, displayZero, displayZeroAs) {
@@ -48,7 +50,7 @@
             controllerAs: 'vm',
             bindToController: true, //required in 1.3+ with controllerAs
             //templateUrl: 'angular-scientific-number.html',
-            template: '<span title="{{vm.scientificNumber | scientificFilter:vm.titleDigits:true}}">{{ vm.scientificNumber | scientificFilter:vm.digits:vm.displayZero:vm.displayZeroAs }}</span>',
+            template: templateString,
         };
 
     });
@@ -107,7 +109,8 @@
             },
             controllerAs: 'vm',
             bindToController: true, //required in 1.3+ with controllerAs
-            templateUrl: 'scientificNumber.html',
+            //templateUrl: 'scientificNumber.html',
+            template: templateString,
         };
 
         return directive;
@@ -255,18 +258,32 @@
                 }
 
                 function reformatViewValue() {
-                    var viewValue = ngModel.$$rawModelValue;
+                    var viewValue = getReformattedValue(ngModel.$$rawModelValue);
 
-                    if(!viewValue && config.clearInvalidInput) {
-                        return;  // dont clear away invalid input!
+                    if (!viewValue) {
+                        return; // dont clear away invalid input!
                     }
 
-                    if (viewValue && viewValue !== '' && isNumber(viewValue)) {
-                        if (expDigits && config.extendDigitsAllowed) {
+                    if (config.restoreOriginalValueOnFocus) {
+                        element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
+                    } else {
+                        ngModel.$setViewValue(viewValue);
+                        ngModel.$render();
+                    }
+                }
 
+                function getReformattedValue(value) {
+                    var inputValue = value;
+
+                    if (!inputValue) {
+                        return inputValue; // dont clear away invalid input!
+                    }
+
+                    if (inputValue && inputValue !== '' && isNumber(inputValue)) {
+                        if (expDigits && config.extendDigitsAllowed) {
                             // check if expDigits has to be changed
-                            var newViewValue = convertToExponential(viewValue);
-                            var newViewValueRaw = convertToExponentialRaw(viewValue);
+                            var newViewValue = convertToExponential(inputValue);
+                            var newViewValueRaw = convertToExponentialRaw(inputValue);
                             var precisionRaw = getNumberPrecision(newViewValueRaw);
 
                             if (expDigits && !config.restoreOriginalValueOnFocus) {
@@ -275,22 +292,16 @@
                                 } else {
                                     expDigits = config.digits;
                                 }
-                                newViewValue = convertToExponential(viewValue);
+                                newViewValue = convertToExponential(inputValue);
                             }
-                            viewValue = newViewValue;
-                            //element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
-
+                            inputValue = newViewValue;
                         } else {
                             // just format it
-                            viewValue = convertToExponential(viewValue);
+                            var newValue = convertToExponential(inputValue);
+                            inputValue = newValue;
                         }
                     }
-                    if (config.restoreOriginalValueOnFocus) {
-                        element.val(viewValue); // works! keeps internally the unchanged value, formats the output!
-                    } else {
-                        ngModel.$setViewValue(viewValue);
-                        ngModel.$render();
-                    }
+                    return inputValue;
                 }
 
                 ngModel.$parsers.push(function (viewValue) {
@@ -309,7 +320,7 @@
 
                 ngModel.$formatters.unshift(function (value) {
                     if (value) {
-                        return convertToExponential(value);
+                        return getReformattedValue(value);
                     } else {
                         return value;
                     }
@@ -363,6 +374,21 @@
             return {
                 options: this.options
             };
+        };
+    });
+
+    mod.directive("minExcl", function() {
+        return {
+            restrict: "A",
+            require: "ngModel",
+            link: function(scope, element, attributes, ngModel) {
+                ngModel.$validators.minExcl = function(modelValue) {
+                    if (!isNaN(modelValue) && modelValue !== "" && attributes.minExcl !== "")
+                        return Number(modelValue) > attributes.minExcl;
+                    else
+                        return true;
+                }
+            }
         };
     });
 
